@@ -1,0 +1,431 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+  <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"> 
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script defer src="vendor.js"></script>
+<script defer src="detailed_payment.js"></script>
+<link rel="stylesheet" href="details_model_popup.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap');
+  body{
+    font-family: 'Open Sans', sans-serif;
+  }
+
+/* jkahjfk */
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+  </style>
+</head>
+<body onload="extract_ls()">
+    <h3 class="text-center mt-3">EXPENSE TRACKER</h3>
+
+    <div class="rounded bg-white shadow overflow-auto h-75 m-5 mb-0">  
+      <table class="table" style="color: white;">
+        <thead class="bg-black no-hover text-center sticky-top" id="thead">
+          <tr>
+            <td >TYPE</td>
+            <td >DATE</td>
+            <td >AMOUNT</td>
+            <td >MODE OF PAYMENT</td>
+          </tr>
+        </thead>
+        <tbody class="text-center" id="main_table">
+
+        </tbody>
+
+      </table>
+      <br>
+    </div>
+    <div  class="rounded bg-white shadow overflow-auto mb-0 h-auto mt-0 m-5 ">
+<table class="table">
+
+    <tr class="table-light text-center sticky-top" id="bottom_thead">
+      <td class="text-success">CURRENT CARD BALANCE</td>
+      <td class="text-success" id="card_balance">0</td>
+      <td class="text-success">CURRENT WALLET BALANCE</td>
+      <td class="text-success" id="cash_balance">0</td>
+      <td class="text-danger">TOTAL AMOUNT SPEND</td>
+      <td class="text-danger" id="balance">0</td>
+    </tr>
+</table>
+    </div>
+    <div class="text-center mb-3">
+        <button class="btn btn-danger" id="expense" onclick="access_pop_up(this)">Add Expense</button>
+        <button class="btn btn-success" id="add_amount" onclick="access_pop_up(this)">Add Amount</button>
+    </div>
+    
+</div>
+
+
+ 
+ 
+<div id="id01" class="w3-modal">
+  <div class="w3-modal-content w3-card-4">
+    <header class="w3-container w3-red" id="header"> 
+      <span onclick="document.getElementById('id01').style.display='none'" 
+      class="w3-button w3-display-topright">&times;</span>
+      <h2 style="text-align: center;">Modal Header</h2>
+    </header>
+    <div class="form-group m-4" id="model_content">
+      <label for="Expense_name">Expense Name</label>
+      <input type="text" name="" class="form-control" id="Expense_name">
+      <label for="amount"class="mt-2">Amount</label>
+      <input type="number" name="" class="form-control" id="amount">
+      <label for="date"class="mt-2" id="date_dom">Date</label>
+      <input type="date" name="" class="form-control " id="date">
+      <label for="mop" class="mt-2">Mode of payment</label>
+      <select name="" class="form-select" id="mop">
+          <option value="card" sel>card/Gpay</option>
+          <option value="cash">Cash</option>
+      </select>
+    </div>
+    <footer class="w3-container w3-red" id="footer">
+      <Button class="btn btn-success" style="float: right;" onclick="save_btn(this)"> Save</Button>
+       
+    </footer>
+  </div>
+</div>
+</div>
+
+
+
+<!-- details model popup -->
+<!-- Trigger/Open The Modal -->
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title">PAYMENT DETAILS</h1>
+        <button type="button" class="close btn btn-light" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+        <label for="PD_type" style="font-weight: bold;">TYPE</label>
+        <select name="" class="form-select" id="PD_type">
+          <option value="TopUp" sel>TopUp</option>
+          <option value="Expense">Expense</option>
+      </select>
+        <label for="PD_expense_name"class="mt-2" style="font-weight: bold;">EXPENSE NAME</label>
+        <input type="text" name="" class="form-control" id="PD_expense_name">
+        <label for="PD_expense_amount"class="mt-2" style="font-weight: bold;">EXPENSE AMOUNT</label>
+        <input type="number" name="" class="form-control" id="PD_expense_amount">
+        <label for="PD_date"class="mt-2" id="date_dom" style="font-weight: bold;">DATE</label>
+        <input type="date" name="" class="form-control " id="PD_date">
+        <label for="PD_mop" class="mt-2" style="font-weight: bold;">PAYMENT METHOD</label>
+        <select name="" class="form-select" id="PD_mop">
+            <option value="card" sel>card/Gpay</option>
+            <option value="cash">Cash</option>
+        </select>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="save_pd()" class="btn btn-primary">Save changes</button>
+        <button type="button" onclick="delete_pd()"  class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+   var pop_up =document.getElementById('id01')
+var amount_json = []
+window.onclick = function(event) {
+    if (event.target == pop_up) {
+        pop_up.style.display= "none";
+        thead.className = "table-dark text-center sticky-top"
+        build_html(amount_json)
+        process_balance(amount_json);
+    }
+  }
+  document.getElementById("date_dom").value = new Date
+  var thead = document.getElementById("thead")
+  var bottom_thead = document.getElementById("bottom_thead")
+function access_pop_up(obj){
+    thead.className = "table-dark text-center"
+    bottom_thead.className = "table-light text-center"
+    var buttons = obj
+    var model_pop_up = document.getElementById("id01")
+    model_pop_up.style.display='block';
+    var current_id = buttons.id;
+    var header =  document.getElementById("header")
+    var footer = document.getElementById("footer")
+    var heading = header.children[1]
+    var model_content = document.getElementById("model_content")
+    if (current_id=="expense"){
+        model_content.children[0].innerText ="Expense Name"
+        heading.innerText = "Expense"
+        header.className = "w3-container w3-red";
+        footer.className = "w3-container w3-red";
+    }
+    else{
+        model_content.children[0].innerText ="Remitter Name"
+        heading.innerText = "Amount Top Up"
+        header.className = "w3-container w3-green";
+        footer.className = "w3-container w3-green";
+    }
+}
+
+var id_count = 0
+function save_btn(obj){
+    thead.className = "table-dark text-center sticky-top"
+    bottom_thead.className = "table-light text-center sticky-top"
+    pop_up.style.display= "none";
+    var popup_div = obj.parentNode.parentNode
+    var heading_name = popup_div.children[0].children[1].innerText
+    if(heading_name == "Expense"){
+     create_json("Expense")   
+    }
+    else{
+       create_json("TopUp")
+    }
+    id_count++; 
+    save_to_ls(amount_json);
+    build_html(amount_json)
+    process_balance(amount_json);
+
+}
+function create_json(type){
+    var expense_name = document.getElementById("Expense_name").value
+    var amount = document.getElementById("amount").value
+    var date = document.getElementById("date").value
+    var mop = document.getElementById("mop").value
+    if (expense_name && amount && date !== "" ){
+    expense_json = {id:id_count,type:type,expense_name:expense_name,amount:amount,date:date,mop:mop}
+    amount_json.push(expense_json)}
+    else{
+        alert("You haven't completed the credentials")
+        pop_up.style.display= "inline"; 
+        bottom_thead.className = "table-light text-center"
+    }
+}
+
+function build_html(json_file){
+    var table = document.getElementById("main_table")
+    table.innerHTML = "";
+    document.getElementById("Expense_name").value = "";
+    document.getElementById("amount").value ="";
+    
+    for (let i =0;i<json_file.length;i++){
+        var each_file = json_file[i]
+        
+    
+        var tr = document.createElement("tr")
+        if (each_file.type == "Expense"){
+            tr.className = "table-danger"
+        }
+        else{
+            tr.className = "table-success"
+        }
+        var td = document.createElement("td")
+        td.innerText = each_file["id"]
+        td.style.display = "none"
+        tr.appendChild(td)
+        var td = document.createElement("td")
+        td.innerText = each_file["type"]
+        tr.appendChild(td)
+        var td = document.createElement("td")
+        td.innerText = each_file["date"]
+        tr.appendChild(td)
+        var td = document.createElement("td")
+        td.innerText = each_file["amount"]
+        tr.appendChild(td)
+        var td = document.createElement("td")
+        td.innerText = each_file["mop"]
+        tr.appendChild(td)
+        tr.addEventListener("click", details)
+        table.appendChild(tr)
+
+    }
+}
+
+function process_balance(json_file){
+    var card_expense =0 ;
+    var cash_expense =0;
+    var card_topup =0;
+    var cash_topup =0;
+    for (let i=0;i<json_file.length;i++){
+        var each_object = json_file[i];
+        if(each_object["mop"]== "card" && each_object["type"] == "Expense"){
+            card_expense += parseInt( each_object["amount"])
+            
+        }
+        else if (each_object["mop"]== "cash" && each_object["type"] == "Expense"){
+            cash_expense += parseInt( each_object["amount"])
+            
+        }
+        else if (each_object["mop"]== "card" && each_object["type"] == "TopUp"){
+            card_topup += parseInt( each_object["amount"])
+            
+        }
+        else if (each_object["mop"]== "cash" && each_object["type"] == "TopUp"){
+            cash_topup += parseInt( each_object["amount"])
+              
+        }
+    }
+    var total_expense = card_expense + cash_expense;
+    var card_balance =  card_topup - card_expense;
+    var cash_balance = cash_topup - cash_expense;
+    document.getElementById("card_balance").innerText = card_balance;
+    document.getElementById("cash_balance").innerText = cash_balance;
+    document.getElementById("balance").innerText = total_expense
+}
+
+function save_to_ls(json){
+    var string_josn = JSON.stringify(json)
+    localStorage.setItem("expense_tracker_json", string_josn);
+}
+
+function extract_ls(){
+    var json = localStorage.getItem("expense_tracker_json")
+    if (json !== null || ""){
+        var json_file = JSON.parse(json)
+        amount_json = json_file
+        build_html(json_file)
+        process_balance(json_file)
+        id_count_from_ls = parseInt(json_file[json_file.length -1]["id"])
+        id_count = id_count_from_ls + 1
+        
+    }
+}
+
+
+
+//;lasdkfj;aldkfja;lfkdjasl;fdj;alkjfd;alkfdja;ls
+
+
+var pd_type = document.getElementById("PD_type")
+var pd_expense_name = document.getElementById("PD_expense_name")
+var pd_expense_amount = document.getElementById("PD_expense_amount")
+var pd_date = document.getElementById("PD_date")
+var pd_mop = document.getElementById("PD_mop")
+
+
+
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal
+var td_obj 
+function details(){
+console.log(this.children[0].innerText)
+var tr_id =parseInt(this.children[0].innerText)
+for (let i =0;i< amount_json.length;i++){
+    var each_obj = amount_json[i]
+    if (each_obj.id == tr_id){
+        td_obj = each_obj
+
+    }
+}
+pd_type.value = td_obj.type
+pd_expense_name.value = td_obj.expense_name
+pd_expense_amount.value = td_obj.amount
+pd_date.value = td_obj.date
+pd_mop.value = td_obj.mop
+  
+
+
+    modal.style.display = "block";
+    thead.className = "table-dark text-center"
+    bottom_thead.className = "table-light text-center"
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+    thead.className = "table-dark text-center sticky-top"
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        thead.className = "table-dark text-center sticky-top"
+    }
+}
+}
+
+function save_pd(){
+    modal.style.display = "none";
+    thead.className = "table-dark text-center sticky-top";
+
+    td_obj.type = pd_type.value 
+    td_obj.expense_name = pd_expense_name.value 
+    td_obj.amount = pd_expense_amount.value 
+    td_obj.date = pd_date.value 
+    td_obj.mop =pd_mop.value 
+    save_to_ls(amount_json);
+    build_html(amount_json)
+    process_balance(amount_json);
+}
+
+function delete_pd(){
+    modal.style.display = "none";
+    thead.className = "table-dark text-center sticky-top";
+    for (let i=0;i<amount_json.length;i++){
+        var each_obj = amount_json[i]
+        if (each_obj.id == td_obj.id){
+            amount_json.splice(i,1)
+            console.log(amount_json)
+        }
+    }
+    save_to_ls(amount_json);
+    build_html(amount_json)
+    process_balance(amount_json);
+}
+</script>
+
+
+
+</body>
+</html>
